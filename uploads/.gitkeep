@@ -1,2 +1,2 @@
-# This file is used to maintain the empty uploads directory in git
-# User-uploaded images will be stored here but not committed to the repository 
+# This file is used to maintain the uploads directory in git
+# while ignoring its contents 
