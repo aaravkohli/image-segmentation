@@ -1,0 +1,138 @@
+/* Custom transitions */
+.transition-border {
+    transition: border-color 0.3s ease-in-out;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Image hover effects */
+.image-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.image-container img {
+    transition: transform 0.3s ease-in-out;
+}
+
+.image-container:hover img {
+    transform: scale(1.05);
+}
+
+/* Chart container styles */
+.chart-container {
+    position: relative;
+    margin: auto;
+    height: 300px;
+    width: 100%;
+}
+
+/* Custom loading animation */
+.loading-spinner {
+    border-top-color: #3B82F6;
+    border-left-color: #3B82F6;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+    /* Adjust chart heights for mobile */
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+    }
+
+    /* Make export buttons stack on mobile */
+    #export-buttons {
+        flex-direction: column;
+    }
+
+    #export-buttons button {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Adjust spacing for mobile */
+    .space-y-6 > div {
+        margin-bottom: 1rem;
+    }
+
+    /* Make metrics more compact on mobile */
+    .grid.grid-cols-1.md\:grid-cols-2 > div {
+        margin-bottom: 0.5rem;
+    }
+
+    /* Adjust image grid for mobile */
+    .grid.grid-cols-1.md\:grid-cols-3 {
+        gap: 1rem;
+    }
+
+    /* Make text more readable on mobile */
+    .text-2xl {
+        font-size: 1.5rem;
+    }
+
+    .text-lg {
+        font-size: 1.25rem;
+    }
+
+    /* Adjust padding for mobile */
+    .p-4.md\:p-6 {
+        padding: 1rem;
+    }
+}
+
+/* General styles */
+body {
+    overflow-x: hidden;
+}
+
+/* Chart tooltip styles */
+.chartjs-tooltip {
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 0.25rem;
+    color: white;
+    padding: 0.5rem;
+    pointer-events: none;
+    position: absolute;
+    transform: translate(-50%, 0);
+    transition: all .1s ease;
+    z-index: 100;
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+} 

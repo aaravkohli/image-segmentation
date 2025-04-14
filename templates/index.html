@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Segmentation Analysis</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <main class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Image Segmentation Analysis</h1>
+            <p class="mt-2 text-gray-600">Upload an image to analyze segmentation results</p>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="max-w-2xl mx-auto mb-8">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex flex-col items-center">
+                    <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+                            <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                            <p class="text-xs text-gray-500">PNG, JPG or JPEG (MAX. 10MB)</p>
+                        </div>
+                        <input id="dropzone-file" type="file" class="hidden" accept="image/*" />
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results" class="hidden">
+            <!-- Images Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <h3 class="text-lg font-semibold mb-2">Original Image</h3>
+                    <img id="original-image" class="w-full h-auto rounded-lg" alt="Original Image">
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <h3 class="text-lg font-semibold mb-2">Backtracking Result</h3>
+                    <img id="backtracking-image" class="w-full h-auto rounded-lg" alt="Backtracking Result">
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <h3 class="text-lg font-semibold mb-2">Otsu's Method Result</h3>
+                    <img id="otsu-image" class="w-full h-auto rounded-lg" alt="Otsu's Method Result">
+                </div>
+            </div>
+
+            <!-- Analysis Sections -->
+            <div class="space-y-6">
+                <!-- Histogram Analysis -->
+                <div class="bg-white rounded-lg shadow-md p-4 md:p-6">
+                    <h2 class="text-lg font-semibold mb-4">Histogram Analysis</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <p class="text-sm text-gray-600">Mean Intensity</p>
+                            <p id="histogram-mean" class="text-2xl font-bold text-blue-600"></p>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="text-sm text-gray-600">Standard Deviation</p>
+                            <p id="histogram-std" class="text-2xl font-bold text-green-600"></p>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="text-sm text-gray-600">Peaks</p>
+                            <p id="histogram-peaks" class="text-lg text-purple-600"></p>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="text-sm text-gray-600">Valleys</p>
+                            <p id="histogram-valleys" class="text-lg text-red-600"></p>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <canvas id="histogram-chart" class="w-full h-64 md:h-80"></canvas>
+                    </div>
+                </div>
+
+                <!-- Backtracking Analysis -->
+                <div class="bg-white rounded-lg shadow-md p-4 md:p-6">
+                    <h2 class="text-lg font-semibold mb-4">Backtracking Analysis</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div class="space-y-2">
+                            <p class="text-sm text-gray-600">Final Threshold</p>
+                            <p id="final-threshold" class="text-2xl font-bold text-blue-600"></p>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="text-sm text-gray-600">Best Contrast</p>
+                            <p id="best-contrast" class="text-2xl font-bold text-green-600"></p>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="text-sm text-gray-600">Foreground Ratio</p>
+                            <p id="foreground-ratio" class="text-2xl font-bold text-purple-600"></p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <canvas id="threshold-chart" class="w-full h-64 md:h-80"></canvas>
+                        </div>
+                        <div>
+                            <canvas id="contrast-chart" class="w-full h-64 md:h-80"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Otsu Analysis -->
+                <div class="bg-white rounded-lg shadow-md p-4 md:p-6">
+                    <h2 class="text-lg font-semibold mb-4">Otsu's Method Analysis</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <p class="text-sm text-gray-600">Foreground Homogeneity</p>
+                            <p id="otsu-fg-homogeneity" class="text-2xl font-bold text-blue-600"></p>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="text-sm text-gray-600">Background Homogeneity</p>
+                            <p id="otsu-bg-homogeneity" class="text-2xl font-bold text-green-600"></p>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="text-sm text-gray-600">Edge Strength</p>
+                            <p id="otsu-edge-strength" class="text-2xl font-bold text-purple-600"></p>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="text-sm text-gray-600">Foreground Ratio</p>
+                            <p id="otsu-foreground-ratio" class="text-2xl font-bold text-red-600"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image Comparison -->
+                <div class="bg-white rounded-lg shadow-md p-4 md:p-6">
+                    <h2 class="text-lg font-semibold mb-4">Image Comparison</h2>
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <canvas id="comparison-chart" class="w-full h-64 md:h-80"></canvas>
+                        </div>
+                        <div class="text-sm text-gray-600">
+                            <p class="mb-2">Compare metrics between the current and previous image. Hover over bars for detailed values including:</p>
+                            <ul class="list-disc list-inside space-y-1">
+                                <li>Exact values with units</li>
+                                <li>Percentage difference between images</li>
+                                <li>Description of each metric</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export Section -->
+                <div class="bg-white rounded-lg shadow-md p-4 md:p-6">
+                    <h2 class="text-lg font-semibold mb-4">Export Analysis</h2>
+                    <div id="export-buttons" class="flex flex-wrap gap-2 md:gap-4">
+                        <!-- Export buttons will be added here dynamically -->
+                    </div>
+                    <div class="mt-4 text-sm text-gray-600">
+                        <p>Export analysis charts as PNG images for use in reports or presentations.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div id="loading" class="hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center">
+            <div class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+    </main>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html> 
