@@ -1,3 +1,0 @@
-/Users/aaravkohli/DAA project/build/CMakeFiles/image_segmentation.dir
-/Users/aaravkohli/DAA project/build/CMakeFiles/edit_cache.dir
-/Users/aaravkohli/DAA project/build/CMakeFiles/rebuild_cache.dir
